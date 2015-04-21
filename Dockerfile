@@ -15,5 +15,9 @@ RUN		curl -L https://github.com/odise/go-cron/releases/download/${GO_CRON_VERSIO
 		| zcat > /usr/local/bin/go-cron \
 		&& chmod u+x /usr/local/bin/go-cron
 
+#18080 http status port
+EXPOSE		18080
 
+ADD		docker-entrypoint.sh /usr/local/sbin/docker-entrypoint.sh
+ENTRYPOINT	["/usr/local/sbin/docker-entrypoint.sh"]
 
