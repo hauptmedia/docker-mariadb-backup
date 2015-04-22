@@ -1,13 +1,5 @@
-FROM		debian:jessie
+FROM		hauptmedia/mariadb:10.0-galera
 MAINTAINER	Julian Haupt <julian.haupt@hauptmedia.de>
-
-ENV		DEBIAN_FRONTEND noninteractive
-RUN		apt-get update -qq && \
-		apt-get upgrade --yes && \ 
-    		apt-get install -y --no-install-recommends percona-xtrabackup curl wget ca-certificates && \ 
-		apt-get clean autoclean && \
-		apt-get autoremove --yes && \ 
-		rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 ENV		GO_CRON_VERSION v0.0.7
 
