@@ -1,0 +1,16 @@
+#!/bin/sh
+
+PIDFILE=/var/run/backup-run.pid
+
+if [ -f $PIDFILE ]; then
+	echo $0 is already running with pid $(cat $PIDFILE), aborting!
+	exit 1
+fi
+
+echo $$ >$PIDFILE
+
+backup-galera-xtrabackup-v2 \
+-a gcomm://172.17.0.19:4567 \
+-g MyClusterName 
+
+rm $PIDFILE
