@@ -10,7 +10,7 @@ It creates a listening socket for receiving the state snapshot transfer
 and launches a galera arbitrator which connects to the cluster, triggers
 a state snapshot transfer and disconnects from the cluster.
 
-*Please note: The donor cluster node must be able to connect to connect to
+*Please note: The donor cluster node must be able to connect to
 the listen address (which may be specified using the -l option)*
 
 Example usage:
