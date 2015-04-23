@@ -4,12 +4,10 @@ This image can be used to backup mariadb galera clusters.
 
 ## remote-galera-xtrabackup-v2
 
-Backups a galera cluster via a remote connection using xtrabackup.
+Backups a galera cluster via a remote connection using xtrabackup-v2 sst method.
 
 It creates a listening socket for receiving the state snapshot transfer
-
-and launches an galera arbitrator which connects to the cluster, triggers
-
+and launches a galera arbitrator which connects to the cluster, triggers
 a state snapshot transfer and disconnects from the cluster.
 
 *Please note: The donor cluster node must be able to connect to connect to
