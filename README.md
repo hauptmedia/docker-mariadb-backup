@@ -25,7 +25,7 @@ Example standalone run:
 
 ```bash
 docker run -i -t --rm \
--v /tmp/mysqlbackup:/var/lib/mysql \
+-v /var/backups:/var/backups \
 hauptmedia/mariadb-backup \
 backup-mysqldump \
 -u root -p test -h 172.17.0.19
