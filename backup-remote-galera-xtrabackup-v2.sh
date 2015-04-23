@@ -35,7 +35,7 @@ if [ -z "$CLUSTER_ADDRESS" ] || [ -z "$CLUSTER_NAME" ]; then
 	echo
 	echo "  -a  Specifies the galera cluster address"
 	echo "  -g  Specifies the galera cluster name"
-	echo "  -l  Specifies the ip and port where to listen for the sst (default: public-ip:4444)"
+	echo "  -l  Specifies the ip and port where to listen for the state snapshot transfer (default: public-ip:4444)"
 	echo
 	exit 1
 fi
@@ -43,13 +43,14 @@ fi
 echo Using the following configuration:
 echo
 echo "    data_dir:          ${DATA_DIR}"
+echo "    cluster_name:      ${CLUSTER_NAME}"
 echo "    cluster_address:   ${CLUSTER_ADDRESS}"
 echo "    listen_address:    ${LISTEN_ADDRESS}"
 echo
 
+#--auth replication:test \
 wsrep_sst_xtrabackup-v2 \
 --role joiner \
---auth replication:test \
 --datadir ${DATA_DIR} \
 --address ${LISTEN_ADDRESS} \
 --defaults-file /etc/mysql/my.cnf \
