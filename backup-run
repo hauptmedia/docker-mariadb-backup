@@ -7,10 +7,17 @@ if [ -f $PIDFILE ]; then
 	exit 1
 fi
 
+if [ ! -x /usr/local/bin/backup-${BACKUP_METHOD} ]; then
+	echo Backup Method ${BACKUP_METHOD} does not exists!
+	exit 1
+fi
+
 echo $$ >$PIDFILE
 
-backup-galera-xtrabackup-v2 \
--a gcomm://172.17.0.19:4567 \
--g MyClusterName 
+/usr/local/bin/backup-${BACKUP_METHOD} ${BACKUP_OPTS}
+
+retval=$?
 
 rm $PIDFILE
+
+exit $retval

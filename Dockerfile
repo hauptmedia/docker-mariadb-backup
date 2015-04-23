@@ -1,6 +1,13 @@
 FROM		hauptmedia/mariadb:10.0-galera
 MAINTAINER	Julian Haupt <julian.haupt@hauptmedia.de>
 
+# install required packages 
+RUN		apt-get update -qq && \
+		apt-get install -y --no-install-recommends bzip2 && \
+                apt-get clean autoclean && \
+                apt-get autoremove --yes && \
+                rm -rf /var/lib/{apt,dpkg,cache,log}/
+
 ENV		GO_CRON_VERSION v0.0.7
 
 RUN		curl -L https://github.com/odise/go-cron/releases/download/${GO_CRON_VERSION}/go-cron-linux.gz \

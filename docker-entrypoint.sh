@@ -1,6 +1,11 @@
 #!/bin/sh
 set -e 
 
+if [ -n "$TIMEZONE" ]; then
+	echo ${TIMEZONE} > /etc/timezone && \
+	dpkg-reconfigure -f noninteractive tzdata
+fi
+
 if [ $1 = "go-cron" ]; then
 
 	if [ -z "$SCHEDULE" ]; then
