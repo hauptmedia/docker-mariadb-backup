@@ -1,12 +1,13 @@
 # docker-mariadb-backup
 
-This image can be used to periodically backup MySQL, MariaDB, and MariaDB Galera cluster instances.
+This container can be used to periodically backup MySQL, MariaDB, and MariaDB Galera cluster instances.
 
-Example usage which will backup the database every day at 03:00:
+Example usage which will backup the database every day at 03:00. You can check the last run with the integrated HTTP server on port 18080:
 
 ```bash
-docker run -i -t --rm \
+docker run -d \
 -v /tmp/backup:/var/backup \
+-p 18080:18080 \
 -e TIMEZONE="Europe/Berlin" \
 -e SCHEDULE="0 0 3 * *" \
 -e BACKUP_METHOD="mysqldump" \
