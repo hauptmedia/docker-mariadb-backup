@@ -13,7 +13,17 @@ a state snapshot transfer and disconnects from the cluster.
 *Please note: The donor cluster node must be able to connect to
 the listen address (which may be specified using the -l option)*
 
-Example usage:
+```bash
+Usage: /usr/local/bin/backup-galera-xtrabackup-v2 -a gcomm://ip:4567,ip:4567 -g MyClusterName
+
+  -a  Specifies the galera cluster address (required)
+  -g  Specifies the galera cluster name (required)
+  -l  Specifies the ip and port where to listen for the state snapshot transfer (default: public-ip:4444)
+  -d  Specifies the data directory where to put the backup (default: /var/lib/mysql)
+  -n  Specifies the donor node which should be use (optional)
+```
+
+Example run:
 
 ```bash
 docker run -i -t --rm \

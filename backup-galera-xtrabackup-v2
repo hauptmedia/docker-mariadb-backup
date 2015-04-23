@@ -5,10 +5,17 @@ XTRABACKUP_LOG=/tmp/$$-xtrabackup
 DATA_DIR=/var/lib/mysql
 CLUSTER_ADDRESS=
 CLUSTER_NAME=
+CLUSTER_DONOR_NODE=
 LISTEN_ADDRESS=$(hostname --ip-addr):4444
 
-while getopts ":a:g:l" opt; do
+while getopts ":a:g:ldn" opt; do
   case $opt in
+    n)
+      CLUSTER_DONOR_NODE=$OPTARG
+      ;;
+    d)
+      DATA_DIR=$OPTARG
+      ;;
     l)
       LISTEN_ADDRESS=$OPTARG
       ;;
@@ -33,19 +40,22 @@ if [ -z "$CLUSTER_ADDRESS" ] || [ -z "$CLUSTER_NAME" ]; then
 	echo
 	echo Usage: $0 -a gcomm://ip:4567,ip:4567 -g MyClusterName
 	echo
-	echo "  -a  Specifies the galera cluster address"
-	echo "  -g  Specifies the galera cluster name"
+	echo "  -a  Specifies the galera cluster address (required)"
+	echo "  -g  Specifies the galera cluster name (required)"
 	echo "  -l  Specifies the ip and port where to listen for the state snapshot transfer (default: public-ip:4444)"
+	echo "  -d  Specifies the data directory where to put the backup (default: /var/lib/mysql)"
+	echo "  -n  Specifies the donor node which should be use (optional)"
 	echo
 	exit 1
 fi
 
 echo Using the following configuration:
 echo
-echo "    data_dir:          ${DATA_DIR}"
-echo "    cluster_name:      ${CLUSTER_NAME}"
-echo "    cluster_address:   ${CLUSTER_ADDRESS}"
-echo "    listen_address:    ${LISTEN_ADDRESS}"
+echo "    data_dir:             ${DATA_DIR}"
+echo "    cluster_name:         ${CLUSTER_NAME}"
+echo "    cluster_donor_node:   ${CLUSTER_DONOR_NODE}"
+echo "    cluster_address:      ${CLUSTER_ADDRESS}"
+echo "    listen_address:       ${LISTEN_ADDRESS}"
 echo
 
 #--auth replication:test \
@@ -78,9 +88,12 @@ fi
 echo
 echo xtrabackup_address = ${XTRABACKUP_ADDRESS}
 
-garbd	-a ${CLUSTER_ADDRESS} \
-	-g ${CLUSTER_NAME} \
-	--sst xtrabackup-v2:${XTRABACKUP_ADDRESS}
+GARBD_OPTS="-a ${CLUSTER_ADDRESS} -g ${CLUSTER_NAME} --sst xtrabackup-v2:${XTRABACKUP_ADDRESS}"
+if [ -n "$CLUSTER_DONOR_NODE" ]; then
+	GARBD_OPTS="${GARBD_OPTS} --donor ${CLUSTER_DONOR_NODE}"
+fi
+
+garbd $GARBD_OPTS	
 
 echo
 echo -n State Snapshot Transfer in progress 
