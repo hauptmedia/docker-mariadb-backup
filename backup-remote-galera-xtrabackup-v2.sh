@@ -2,11 +2,15 @@
 
 PID=$$
 XTRABACKUP_LOG=/tmp/$$-xtrabackup
-DATADIR=/var/lib/mysql
+DATA_DIR=/var/lib/mysql
 CLUSTER_ADDRESS=
+LISTEN_ADDRESS=$(hostname --ip-addr):4444
 
 while getopts ":a:" opt; do
   case $opt in
+    l)
+      LISTEN_ADDRESS=$OPTARG
+      ;;
     a)
       CLUSTER_ADDRESS=$OPTARG
       ;;
@@ -26,21 +30,29 @@ if [ -z "$CLUSTER_ADDRESS" ]; then
 	echo Usage: $0 -a gcomm://ip:4567,ip:4567
 	echo
 	echo "  -a  Specifies the galera cluster address"
+	echo "  -l  Specifies the ip and port where to listen for the sst (default: public-ip:4444)"
 	echo
 	exit 1
 fi
 
+echo Using the following configuration:
+echo
+echo "data_dir:		${DATA_DIR}"
+echo "cluster_address:	${CLUSTER_ADDRESS}"
+echo "listen_address:	${LISTEN_ADDRESS}"
+echo
 
 wsrep_sst_xtrabackup-v2 \
 --role joiner \
 --auth replication:test \
---datadir ${DATADIR} \
---address 172.17.0.11 \
+--datadir ${DATA_DIR} \
+--address ${LISTEN_ADDRESS} \
 --defaults-file /etc/mysql/my.cnf \
 --parent $PID >${XTRABACKUP_LOG} 2>&1 &
 
 COUNTER=0
 
+echo
 echo -n Waiting xtrabackup to become ready
 
 while [ -z "$XTRABACKUP_ADDRESS" ] && [  $COUNTER -lt 30 ]; do
@@ -57,13 +69,15 @@ if [ -z "$XTRABACKUP_ADDRESS" ]; then
 	exit 1
 fi
 
+echo
 echo xtrabackup_address = ${XTRABACKUP_ADDRESS}
 
 garbd -a ${CLUSTER_ADDRESS} -g test --sst xtrabackup-v2:${XTRABACKUP_ADDRESS}
 
-echo -n Waiting SST to finish
+echo
+echo -n State Snapshot Transfer in progress 
 
-while [ -f ${DATADIR}/sst_in_progress ]; do 
+while [ -f ${DATA_DIR}/sst_in_progress ]; do 
         echo -n "."
 	sleep 1
 done
@@ -71,3 +85,15 @@ done
 echo
 
 cat ${XTRABACKUP_LOG}
+
+echo
+
+if grep -q "\[ERROR\]" ${XTRABACKUP_LOG}; then
+	echo Backup failed with errors!
+	exit 1
+else
+	echo Backup finished successfully.
+	exit 0 
+fi
+
+
