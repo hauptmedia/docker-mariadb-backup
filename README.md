@@ -1,12 +1,32 @@
 # docker-mariadb-backup
 
-This image can be used to backup mariadb galera clusters.
+This image can be used to backup MySQL, MariaDB, and MariaDB Galera cluster instances.
 
 # Available backup methods
 
 ## mysqldump
 
 Backups a MySQL/MariaDB database via mysqldump.
+
+Example standalone run:
+
+```bash
+docker run -i -t --rm \
+-v /tmp/mysqlbackup:/var/lib/mysql \
+hauptmedia/mariadb-backup \
+backup-mysqldump \
+-u root -p test -h 172.17.0.19
+```
+
+```
+Usage: /usr/local/bin/backup-mysqldump -u mysqluser -p mysqlpassword -h mysqlhost
+
+  -u  Specifies the MySQL user (required)
+  -p  Specifies the MySQL password (required)
+  -h  Specifies the MySQL host (required)
+  -P  Specifies the MySQL port (optional)
+  -d  Specifies the data directory where to put the backup (default: /var/lib/mysql)
+```
 
 ## galera-xtrabackup-v2
 
@@ -19,7 +39,7 @@ a state snapshot transfer and disconnects from the cluster.
 *Please note: The donor cluster node must be able to connect to
 the listen address (which may be specified using the -l option)*
 
-Example run:
+Example standalone run:
 
 ```bash
 docker run -i -t --rm \
