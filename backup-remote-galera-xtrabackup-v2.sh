@@ -4,15 +4,19 @@ PID=$$
 XTRABACKUP_LOG=/tmp/$$-xtrabackup
 DATA_DIR=/var/lib/mysql
 CLUSTER_ADDRESS=
+CLUSTER_NAME=
 LISTEN_ADDRESS=$(hostname --ip-addr):4444
 
-while getopts ":a:" opt; do
+while getopts ":a:g:l" opt; do
   case $opt in
     l)
       LISTEN_ADDRESS=$OPTARG
       ;;
     a)
       CLUSTER_ADDRESS=$OPTARG
+      ;;
+    g)
+      CLUSTER_NAME=$OPTARG
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -25,11 +29,12 @@ while getopts ":a:" opt; do
   esac
 done
 
-if [ -z "$CLUSTER_ADDRESS" ]; then
+if [ -z "$CLUSTER_ADDRESS" ] || [ -z "$CLUSTER_NAME" ]; then
 	echo
-	echo Usage: $0 -a gcomm://ip:4567,ip:4567
+	echo Usage: $0 -a gcomm://ip:4567,ip:4567 -g MyClusterName
 	echo
 	echo "  -a  Specifies the galera cluster address"
+	echo "  -g  Specifies the galera cluster name"
 	echo "  -l  Specifies the ip and port where to listen for the sst (default: public-ip:4444)"
 	echo
 	exit 1
@@ -37,9 +42,9 @@ fi
 
 echo Using the following configuration:
 echo
-echo "data_dir:		${DATA_DIR}"
-echo "cluster_address:	${CLUSTER_ADDRESS}"
-echo "listen_address:	${LISTEN_ADDRESS}"
+echo "    data_dir:          ${DATA_DIR}"
+echo "    cluster_address:   ${CLUSTER_ADDRESS}"
+echo "    listen_address:    ${LISTEN_ADDRESS}"
 echo
 
 wsrep_sst_xtrabackup-v2 \
@@ -72,7 +77,9 @@ fi
 echo
 echo xtrabackup_address = ${XTRABACKUP_ADDRESS}
 
-garbd -a ${CLUSTER_ADDRESS} -g test --sst xtrabackup-v2:${XTRABACKUP_ADDRESS}
+garbd	-a ${CLUSTER_ADDRESS} \
+	-g ${CLUSTER_NAME} \
+	--sst xtrabackup-v2:${XTRABACKUP_ADDRESS}
 
 echo
 echo -n State Snapshot Transfer in progress 
@@ -82,6 +89,7 @@ while [ -f ${DATA_DIR}/sst_in_progress ]; do
 	sleep 1
 done
 
+echo
 echo
 
 cat ${XTRABACKUP_LOG}
