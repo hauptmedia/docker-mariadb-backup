@@ -1,4 +1,4 @@
 build:
-	docker build -t="hauptmedia/mysql-backup" .
+	docker build -t="hauptmedia/mariadb-backup" .
 
 .PHONY: build 
