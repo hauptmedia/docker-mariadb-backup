@@ -16,6 +16,8 @@ RUN		apt-get update -qq && \
                 apt-get autoremove --yes && \
                 rm -rf /var/lib/{apt,dpkg,cache,log}/
 	
+# install backup script
+ADD		backup-remote-galera-xtrabackup-v2.sh /usr/local/bin/backup-remote-galera-xtrabackup-v2.sh
 
 #18080 http status port
 EXPOSE		18080

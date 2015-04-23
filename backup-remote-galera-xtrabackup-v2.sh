@@ -3,6 +3,33 @@
 PID=$$
 XTRABACKUP_LOG=/tmp/$$-xtrabackup
 DATADIR=/var/lib/mysql
+CLUSTER_ADDRESS=
+
+while getopts ":a:" opt; do
+  case $opt in
+    a)
+      CLUSTER_ADDRESS=$OPTARG
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "$CLUSTER_ADDRESS" ]; then
+	echo
+	echo Usage: $0 -a gcomm://ip:4567,ip:4567
+	echo
+	echo "  -a  Specifies the galera cluster address"
+	echo
+	exit 1
+fi
+
 
 wsrep_sst_xtrabackup-v2 \
 --role joiner \
@@ -32,7 +59,7 @@ fi
 
 echo xtrabackup_address = ${XTRABACKUP_ADDRESS}
 
-garbd -a gcomm://172.17.0.19:4567 -g test --sst xtrabackup-v2:${XTRABACKUP_ADDRESS}
+garbd -a ${CLUSTER_ADDRESS} -g test --sst xtrabackup-v2:${XTRABACKUP_ADDRESS}
 
 echo -n Waiting SST to finish
 
@@ -43,4 +70,4 @@ done
 
 echo
 
-
+cat ${XTRABACKUP_LOG}
