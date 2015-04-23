@@ -18,6 +18,7 @@ RUN		apt-get update -qq && \
 	
 # install backup scripts
 ADD		backup-galera-xtrabackup-v2 /usr/local/bin/backup-galera-xtrabackup-v2
+ADD		backup-mysqldump /usr/local/bin/backup-mysqldump
 ADD		backup-run /usr/local/bin/backup-run
 
 #18080 http status port

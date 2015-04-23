@@ -1,0 +1,78 @@
+#!/bin/bash
+
+BACKUP_DIR=/var/lib/mysql
+MYSQL_USER=
+MYSQL_PASSWORD=
+MYSQL_HOST=
+MYSQL_PORT=3306
+
+while getopts ":u:p:h:P:d" opt; do
+  case $opt in
+    d)
+      BACKUP_DIR=$OPTARG
+      ;;
+    u)
+      MYSQL_USER=$OPTARG
+      ;;
+    p)
+      MYSQL_PASSWORD=$OPTARG
+      ;;
+    P)
+      MYSQL_PORT=$OPTARG
+      ;;
+    h)
+      MYSQL_HOST=$OPTARG
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ]; then
+	echo
+	echo Usage: $0 -u mysqluser -p mysqlpassword -h mysqlhost
+	echo
+	echo "  -u  Specifies the MySQL user (required)"
+	echo "  -p  Specifies the MySQL password (required)"
+	echo "  -h  Specifies the MySQL host (required)"
+	echo "  -P  Specifies the MySQL port (optional)"
+	echo "  -d  Specifies the backup directory where to put the backup (default: /var/lib/mysql)"
+	echo
+	exit 1
+fi
+
+echo Using the following configuration:
+echo
+echo "    backup_dir:       ${BACKUP_DIR}"
+echo "    mysql_user:       ${MYSQL_USER}"
+echo "    mysql_password:   ${MYSQL_PASSWORD}"
+echo "    mysql_host:       ${MYSQL_HOST}"
+echo "    mysql_port:       ${MYSQL_PORT}"
+echo
+
+mysqldump \
+	-u${MYSQL_USER} \
+	-p${MYSQL_PASSWORD} \
+	-h${MYSQL_HOST} \
+	-P${MYSQL_PORT} \
+	--single-transaction \
+	--routines \
+	--triggers \
+	--all-databases \
+	> ${BACKUP_DIR}/backup.sql
+
+RETVAL=$?
+
+if [ "$RETVAL" == 0 ]; then
+	echo Backup finished successfully.
+	exit 0 
+else
+	echo Backup failed with errors!
+	exit 1
+fi

@@ -2,6 +2,12 @@
 
 This image can be used to backup mariadb galera clusters.
 
+# Available backup methods
+
+## mysqldump
+
+Backups a MySQL/MariaDB database via mysqldump.
+
 ## galera-xtrabackup-v2
 
 Backups a galera cluster via a remote connection using xtrabackup-v2 sst method.
