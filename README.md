@@ -2,7 +2,7 @@
 
 This image can be used to backup mariadb galera clusters.
 
-## remote-galera-xtrabackup-v2
+## galera-xtrabackup-v2
 
 Backups a galera cluster via a remote connection using xtrabackup-v2 sst method.
 
