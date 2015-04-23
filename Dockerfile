@@ -15,7 +15,10 @@ RUN		apt-get update -qq && \
                 apt-get clean autoclean && \
                 apt-get autoremove --yes && \
                 rm -rf /var/lib/{apt,dpkg,cache,log}/
-	
+
+# create backup base directory
+RUN		mkdir -p /var/backup
+
 # install backup scripts
 ADD		backup-galera-xtrabackup-v2 /usr/local/bin/backup-galera-xtrabackup-v2
 ADD		backup-mysqldump /usr/local/bin/backup-mysqldump

@@ -25,7 +25,7 @@ Usage: /usr/local/bin/backup-mysqldump -u mysqluser -p mysqlpassword -h mysqlhos
   -p  Specifies the MySQL password (required)
   -h  Specifies the MySQL host (required)
   -P  Specifies the MySQL port (optional)
-  -d  Specifies the data directory where to put the backup (default: /var/lib/mysql)
+  -d  Specifies the backup file where to put the backup (default: /var/backup/CURRENT_DATETIME_MYSQLHOST.mysqldump)
 ```
 
 ## galera-xtrabackup-v2
