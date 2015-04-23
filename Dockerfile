@@ -17,7 +17,7 @@ RUN		apt-get update -qq && \
                 rm -rf /var/lib/{apt,dpkg,cache,log}/
 	
 # install backup script
-ADD		backup-remote-galera-xtrabackup-v2.sh /usr/local/bin/backup-remote-galera-xtrabackup-v2.sh
+ADD		backup-galera-xtrabackup-v2 /usr/local/bin/backup-galera-xtrabackup-v2
 
 #18080 http status port
 EXPOSE		18080

@@ -19,7 +19,7 @@ Example usage:
 docker run -i -t --rm \
 -v /tmp/mysqlbackup:/var/lib/mysql \
 hauptmedia/mariadb-backup \
-backup-remote-galera-xtrabackup-v2.sh \
+backup-galera-xtrabackup-v2 \
 -a gcomm://172.17.0.19:4567 \
 -g MyClusterName 
 ```
