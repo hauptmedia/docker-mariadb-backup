@@ -34,7 +34,7 @@ while getopts ":u:p:h:P:d" opt; do
 done
 
 if [ -z "$BACKUP_FILE" ]; then
-	BACKUP_FILE=/var/backup/$(date +"%Y-%m-%d-%H%M%S")_${MYSQL_HOST}_mysqldump
+	BACKUP_FILE=/var/backups/$(date +"%Y-%m-%d-%H%M%S")_${MYSQL_HOST}_mysqldump
 fi
 
 if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ]; then
@@ -45,7 +45,7 @@ if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ]; then
 	echo "  -p  Specifies the MySQL password (required)"
 	echo "  -h  Specifies the MySQL host (required)"
 	echo "  -P  Specifies the MySQL port (optional)"
-	echo "  -d  Specifies the backup file where to put the backup (default: /var/backup/CURRENT_DATETIME_MYSQLHOST_mysqldump)"
+	echo "  -d  Specifies the backup file where to put the backup (default: /var/backups/CURRENT_DATETIME_MYSQLHOST_mysqldump)
 	echo
 	exit 1
 fi

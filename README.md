@@ -6,7 +6,7 @@ Example usage which will backup the database every day at 03:00. You can check t
 
 ```bash
 docker run -d \
--v /tmp/backup:/var/backup \
+-v /var/backups:/var/backups \
 -p 18080:18080 \
 -e TIMEZONE="Europe/Berlin" \
 -e SCHEDULE="0 0 3 * *" \
@@ -38,7 +38,7 @@ Usage: /usr/local/bin/backup-mysqldump -u mysqluser -p mysqlpassword -h mysqlhos
   -p  Specifies the MySQL password (required)
   -h  Specifies the MySQL host (required)
   -P  Specifies the MySQL port (optional)
-  -d  Specifies the backup file where to put the backup (default: /var/backup/CURRENT_DATETIME_MYSQLHOST.mysqldump)
+  -d  Specifies the backup file where to put the backup (default: /var/backups/CURRENT_DATETIME_MYSQLHOST_mysqldump)
 ```
 
 ## galera-xtrabackup-v2
