@@ -24,7 +24,7 @@ backup-galera-xtrabackup-v2 \
 -g MyClusterName 
 ```
 
-```bash
+```
 Usage: /usr/local/bin/backup-galera-xtrabackup-v2 -a gcomm://ip:4567,ip:4567 -g MyClusterName
 
   -a  Specifies the galera cluster address (required)
