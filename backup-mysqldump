@@ -54,7 +54,7 @@ echo Using the following configuration:
 echo
 echo "    backup_file:      ${BACKUP_FILE}"
 echo "    mysql_user:       ${MYSQL_USER}"
-echo "    mysql_password:   ****** (not shown)"
+echo "    mysql_password:   "****** (not shown)"
 echo "    mysql_host:       ${MYSQL_HOST}"
 echo "    mysql_port:       ${MYSQL_PORT}"
 echo
