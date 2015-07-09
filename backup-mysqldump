@@ -81,8 +81,8 @@ MYSQL_OPTS="-u${MYSQL_USER} -p${MYSQL_PASSWORD} -h${MYSQL_HOST} -P${MYSQL_PORT}"
 MYSQLDUMP_OPTS="--single-transaction --routines --triggers"
 
 if [ -n "$SPLIT_FILES" ]; then
-	for db in $(${RSH} mysql ${MYSQL_OPTS} -e \"show databases\" -s --skip-column-names | grep -v information_schema | grep -v performance_schema); do
-		for table in $(${RSH} mysql ${MYSQL_OPTS} $db -e \"show tables\" -s --skip-column-names); do
+	for db in $(${RSH} mysql ${MYSQL_OPTS} -e "show\ databases" -s --skip-column-names | grep -v information_schema | grep -v performance_schema); do
+		for table in $(${RSH} mysql ${MYSQL_OPTS} $db -e "show\ tables" -s --skip-column-names); do
 			echo "Dumping ${db}.${table}"
 			
 			echo "SET autocommit=0;SET unique_checks=0;SET foreign_key_checks=0;" >${BACKUP_FILE}_${db}.${table} 
