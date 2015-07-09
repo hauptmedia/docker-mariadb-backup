@@ -61,6 +61,7 @@ if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ]; then
 	echo "  -d  Specifies the backup file where to put the backup (default: /var/backups/CURRENT_DATETIME_MYSQLHOST_mysqldump)"
 	echo "  -c  Specifies the compression method which should be used to compress the dump file (bzip2 or gzip)"
 	echo "  -e  Specified the remote shell which should be used (e.g. \"ssh -C user@remotehost\")"
+	echo "  -x  If specified the backup will create a seperate file for each database/table"
 	echo
 	exit 1
 fi
