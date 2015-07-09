@@ -4,8 +4,10 @@ MYSQL_USER=
 MYSQL_PASSWORD=
 MYSQL_HOST=
 MYSQL_PORT=3306
+COMPRESSION_METHOD=
+RSH=
 
-while getopts ":u:p:h:P:d" opt; do
+while getopts "u:p:h:P:d:c:e:" opt; do
   case $opt in
     d)
       BACKUP_FILE=$OPTARG
@@ -21,6 +23,12 @@ while getopts ":u:p:h:P:d" opt; do
       ;;
     h)
       MYSQL_HOST=$OPTARG
+      ;;
+    c)
+      COMPRESSION_METHOD=$OPTARG
+      ;;
+    e)
+      RSH=$OPTARG
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -39,27 +47,31 @@ fi
 
 if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ]; then
 	echo
-	echo Usage: $0 -u mysqluser -p mysqlpassword -h mysqlhost
+	echo Usage: $0 -u mysqluser -p mysqlpassword -h mysqlhost -c bzip2
 	echo
 	echo "  -u  Specifies the MySQL user (required)"
 	echo "  -p  Specifies the MySQL password (required)"
 	echo "  -h  Specifies the MySQL host (required)"
 	echo "  -P  Specifies the MySQL port (optional)"
 	echo "  -d  Specifies the backup file where to put the backup (default: /var/backups/CURRENT_DATETIME_MYSQLHOST_mysqldump)"
+	echo "  -c  Specifies the compression method which should be used to compress the dump file (bzip2 or gzip)"
+	echo "  -e  Specified the remote shell which should be used (e.g. \"ssh user@remotehost\")"
 	echo
 	exit 1
 fi
 
 echo Using the following configuration:
 echo
-echo "    backup_file:      ${BACKUP_FILE}"
-echo "    mysql_user:       ${MYSQL_USER}"
-echo "    mysql_password:   ****** (not shown)"
-echo "    mysql_host:       ${MYSQL_HOST}"
-echo "    mysql_port:       ${MYSQL_PORT}"
+echo "    backup_file:        ${BACKUP_FILE}"
+echo "    mysql_user:         ${MYSQL_USER}"
+echo "    mysql_password:     ****** (not shown)"
+echo "    mysql_host:         ${MYSQL_HOST}"
+echo "    mysql_port:         ${MYSQL_PORT}"
+echo "    compression_method: ${COMPRESSION_METHOD}"
+echo "    rsh:		      ${RSH}"
 echo
 
-mysqldump \
+${RSH} mysqldump \
 	-u${MYSQL_USER} \
 	-p${MYSQL_PASSWORD} \
 	-h${MYSQL_HOST} \
@@ -71,6 +83,21 @@ mysqldump \
 	> ${BACKUP_FILE}
 
 RETVAL=$?
+
+# compression step
+if [ "$RETVAL" == 0 ]; then
+	if [ "$COMPRESSION_METHOD" = "bzip2" ]; then
+		echo Compressing backup using bzip2 compression method.
+		bzip2 --best ${BACKUP_FILE}
+		RETVAL=$?
+	fi
+	
+	if [ "$COMPRESSION_METHOD" = "gzip" ]; then
+		echo Compressing backup using gzip compression method.
+		gzip --best ${BACKUP_FILE}
+		RETVAL=$?
+	fi
+fi
 
 if [ "$RETVAL" == 0 ]; then
 	echo Backup finished successfully.
